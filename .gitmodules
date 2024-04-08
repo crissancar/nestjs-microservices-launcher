@@ -1,0 +1,9 @@
+[submodule "api-gateway"]
+	path = api-gateway
+	url = https://github.com/crissancar/nestjs-skeleton-microservices-api-gateway
+[submodule "microservice-auth"]
+	path = microservice-auth
+	url = https://github.com/crissancar/nestjs-skeleton-microservices-auth
+[submodule "microservice-users"]
+	path = microservice-users
+	url = https://github.com/crissancar/nestjs-skeleton-microservices-users
