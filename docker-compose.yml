@@ -28,7 +28,7 @@ services:
     build: ./microservice-users
     command: npm run start:launcher
     volumes:
-      - ./microserice-users/src:/usr/src/app/src
+      - ./microservice-users/src:/usr/src/app/src
     networks:
       - skeleton-microservices
 
