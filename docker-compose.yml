@@ -2,58 +2,78 @@ version: '3.9'
 
 services:
   api-gateway:
-    container_name: skeleton-microservices-api-gateway
+    container_name: nestjs-microservices-api-gateway
     build: ./api-gateway
     command: npm run start:launcher
     ports:
       - "3000:3000"
-    volumes:
-      - ./api-gateway/src:/usr/src/app/src
-    networks:
-      - skeleton-microservices
-
-  microservice-auth:
-    container_name: skeleton-microservices-auth
-    build: ./microservice-auth
-    command: npm run start:launcher
     depends_on:
       - postgres
     volumes:
+      - ./api-gateway/src:/usr/src/app/src
+    networks:
+      - nestjs-microservices-network
+
+  microservice-auth:
+    container_name: nestjs-microservices-auth
+    build: ./microservice-auth
+    command: npm run start:launcher
+    depends_on:
+      - api-gateway
+    volumes:
       - ./microservice-auth/src:/usr/src/app/src
     networks:
-      - skeleton-microservices
+      - nestjs-microservices-network
 
   microservice-users:
-    container_name: skeleton-microservices-users
+    container_name: nestjs-microservices-users
     build: ./microservice-users
     command: npm run start:launcher
+    depends_on:
+      - api-gateway
     volumes:
       - ./microservice-users/src:/usr/src/app/src
     networks:
-      - skeleton-microservices
+      - nestjs-microservices-network
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'rabbitmq'
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ./artifacts/rabbitmq/data/:/var/lib/rabbitmq/
+      - ./artifacts/rabbitmq/log/:/var/log/rabbitmq
+    networks:
+      - nestjs-microservices-network
 
   postgres:
-    container_name: skeleton-microservices-postgres
+    container_name: nestjs-microservices-postgres
     image: "postgres:alpine"
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: 'user'
-      POSTGRES_PASSWORD: 'password'
+      POSTGRES_USER: 'admin'
+      POSTGRES_PASSWORD: 'admin'
     volumes:
       - ./artifacts/postgres:/var/lib/postgresql/data/
+      - ./artifacts/sql/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
-      - skeleton-microservices
-  # pgadmin:
-  #   container_name: skeleton-microservices-pgadmin
-  #   image: "dpage/pgadmin4"
-  #   environment:
-  #     PGADMIN_DEFAULT_EMAIL: 'admin@admin.com'
-  #     PGADMIN_DEFAULT_PASSWORD: 'admin'
-  #   ports:
-  #     - "5050:80"
-  #   networks:
-  #     - skeleton-microservices
+      - nestjs-microservices-network
+
+  pgadmin:
+    container_name: nestjs-microservices-pgadmin
+    image: "dpage/pgadmin4"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: 'admin@admin.com'
+      PGADMIN_DEFAULT_PASSWORD: 'admin'
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - nestjs-microservices-network
 
 networks:
-  skeleton-microservices:
+  nestjs-microservices-network:
