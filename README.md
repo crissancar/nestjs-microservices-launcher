@@ -29,7 +29,7 @@ As **technologies and tools**, this project uses:
 - **PostgreSQL** as database
 - **Swagger** as API documentation tool
 
-As **skills and best practices**, this skeleton API uses:
+As **skills and best practices**, this project uses:
 - **Hexagonal Architecture**
 - **Clean Code**
 - **SOLID**
